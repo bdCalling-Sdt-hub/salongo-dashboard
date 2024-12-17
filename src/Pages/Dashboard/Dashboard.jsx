@@ -98,7 +98,7 @@ const Dashboard = () => {
         >
           <Link to="/">
             <p className="text-2xl font-semibold tracking-wider text-primary">
-              TradCouples
+              Salongo
             </p>
           </Link>
         </div>
