@@ -3,13 +3,28 @@ import { Table, Button, Space, Avatar } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import moment from "moment";
 import { FaStar } from "react-icons/fa6";
-import randomImg from "../../assets/randomProfile2.jpg";
-import rentMeLogo from "../../assets/navLogo.png";
+import randomImg from "../../assets/salon-go-logo.png";
+import logo from "../../assets/navLogo.png";
+import { useProfessionalsQuery } from "../../redux/apiSlices/userSlice";
 
 const Vendors = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const navigate = useNavigate();
   const [pageSize, setPageSize] = useState(10);
+
+  const { data: professionals, isLoading } = useProfessionalsQuery();
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <img src={logo} alt="" />
+      </div>
+    );
+  }
+
+  const data = professionals?.data?.data;
+
+  console.log(data);
 
   const dummyData = [
     {
@@ -116,16 +131,16 @@ const Vendors = () => {
   const columns = [
     {
       title: "Id",
-      dataIndex: "id",
-      key: "id",
+      dataIndex: "_id",
+      key: "_id",
     },
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
       render: (text, record) => {
-        const name = record.name;
-        const imgUrl = record.profileImg || randomImg;
+        const name = record?.auth?.name;
+        const imgUrl = record.profile || randomImg;
         const fullImgUrl = imgUrl?.startsWith("http")
           ? imgUrl
           : `${import.meta.env.VITE_BASE_URL}${imgUrl}`;
@@ -141,6 +156,13 @@ const Vendors = () => {
       title: "Email",
       dataIndex: "email",
       key: "email",
+      render: (text, record) => {
+        return (
+          <Space>
+            <span>{record?.auth?.email}</span>
+          </Space>
+        );
+      },
     },
     {
       title: "Address",
@@ -269,7 +291,7 @@ const Vendors = () => {
         position: ["bottomCenter"],
       }}
       columns={columns}
-      dataSource={dummyData}
+      dataSource={data}
       rowKey={(record) => record.id}
       rowSelection={rowSelection}
     />

@@ -18,11 +18,11 @@ const userSlice = api.injectEndpoints({
         };
       },
     }),
-    vendors: builder.query({
+    professionals: builder.query({
       query: () => {
         return {
           method: "GET",
-          url: "/user?role=VENDOR",
+          url: "/dashboard/all-professional",
         };
       },
     }),
@@ -40,6 +40,6 @@ const userSlice = api.injectEndpoints({
 export const {
   useAdminQuery,
   useUsersQuery,
-  useVendorsQuery,
+  useProfessionalsQuery,
   useUserByIdQuery,
 } = userSlice;
