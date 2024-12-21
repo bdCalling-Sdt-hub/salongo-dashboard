@@ -15,7 +15,7 @@ const VerifyOtp = () => {
   const [otp, setOtp] = useState();
   const email = new URLSearchParams(location.search).get("email"); // Get email from query params
 
-  console.log(typeof otp);
+  // console.log(typeof otp);
 
   const [otpVerify] = useOtpVerifyMutation();
   // const [resendOtp] = useResendOtpMutation(); // RTK Query mutation for resending OTP
@@ -68,7 +68,7 @@ const VerifyOtp = () => {
           <OTPInput
             value={otp}
             onChange={setOtp}
-            numInputs={6}
+            numInputs={5}
             inputStyle={{
               height: 50,
               width: 50,

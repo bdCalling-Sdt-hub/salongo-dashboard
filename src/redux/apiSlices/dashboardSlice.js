@@ -6,7 +6,7 @@ const dashboardSlice = api.injectEndpoints({
       query: () => {
         return {
           method: "GET",
-          url: "/dashboard/general-stat",
+          url: "/dashboard/general-stats",
         };
       },
     }),
@@ -36,6 +36,14 @@ const dashboardSlice = api.injectEndpoints({
         };
       },
     }),
+    professionalVsFreelancerData: builder.query({
+      query: () => {
+        return {
+          method: "GET",
+          url: "/dashboard/professional-vs-freelancer",
+        };
+      },
+    }),
   }),
 });
 
@@ -44,4 +52,5 @@ export const {
   useOverAllStateQuery,
   useBestServicesQuery,
   useVendorsConversionDataQuery,
+  useProfessionalVsFreelancerDataQuery,
 } = dashboardSlice;

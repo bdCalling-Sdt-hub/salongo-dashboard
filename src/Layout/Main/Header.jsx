@@ -17,6 +17,10 @@ const Header = () => {
     );
   }
 
+  const adminData = userData?.data;
+
+  // console.log(adminData);
+
   return (
     <div className="flex items-center gap-5 justify-end">
       <Link to="/notification" className="h-fit mt-[10px]">
@@ -33,15 +37,18 @@ const Header = () => {
             height: 45,
           }}
           src={
-            userData?.data?.profileImg
-              ? `${import.meta.env.VITE_BASE_URL}${userData?.data?.profileImg}`
+            adminData?.profile
+              ? adminData?.profile ||
+                `${import.meta.env.VITE_BASE_URL}${adminData?.profile}`
               : logo
           }
           alt="person-male--v2"
           className="clip"
         />
         <div className="flex pr-2 flex-col">
-          <p className="text-xl">{userData?.data?.name || "Shakib Al Hasan"}</p>
+          <p className="text-xl">
+            {adminData?.auth?.name || "Shakib Al Hasan"}
+          </p>
           <p className="text-sm text-gray-500">{userData?.data?.role}</p>
         </div>
       </div>

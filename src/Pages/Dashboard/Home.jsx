@@ -5,14 +5,16 @@ import rentMeLogo from "../../assets/navLogo.png";
 import UserEngagement from "../../components/ui/Home/UserEngagement";
 import GeneralStateSection from "../../components/ui/Home/GeneralStateSection";
 import Professionals from "../../components/ui/Home/Professionals";
+import { useProfessionalVsFreelancerDataQuery } from "../../redux/apiSlices/dashboardSlice";
 
 const Home = () => {
-  const orderSummary = {
-    doneByProfessionals: 65,
-    doneByFreelancers: 35,
-  };
+  // const orderSummary = {
+  //   doneByProfessionals: 65,
+  //   doneByFreelancers: 35,
+  // };
 
-  const isLoading = false;
+  const { data: orderSummary, isLoading } =
+    useProfessionalVsFreelancerDataQuery();
 
   if (isLoading) {
     return (
@@ -21,6 +23,10 @@ const Home = () => {
       </div>
     );
   }
+
+  const data = orderSummary?.data;
+
+  // console.log(data);
 
   return (
     <div>
@@ -60,7 +66,7 @@ const Home = () => {
                   strokeWidth="4"
                   strokeDasharray="100"
                   strokeDashoffset={
-                    (100 * (100 - orderSummary?.doneByProfessionals)) / 100
+                    (100 * (100 - data?.professionalCompletionRate)) / 100
                   }
                   strokeLinecap="round"
                 ></circle>
@@ -68,7 +74,7 @@ const Home = () => {
 
               <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#f6e7ff] w-24 h-24 rounded-full flex flex-col items-center justify-center">
                 <span className="text-2xl font-bold">
-                  {orderSummary?.doneByProfessionals}%
+                  {data?.professionalCompletionRate}%
                 </span>
               </div>
             </div>
@@ -77,13 +83,13 @@ const Home = () => {
               <div className="flex items-center gap-2">
                 <div className="w-4 h-3 rounded-3xl bg-[#5c2579cc]"></div>
                 <p className="text-sm font-medium">
-                  Professionals: {orderSummary?.doneByProfessionals}%
+                  Professionals: {data?.professionalCompletionRate}%
                 </p>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-4 h-3 rounded-3xl bg-[#f6e7ff]"></div>
                 <p className="text-sm font-medium">
-                  Freelancers: {orderSummary?.doneByFreelancers.toFixed(1)}%
+                  Freelancers: {data?.freelancerCompletionRate}%
                 </p>
               </div>
             </div>
