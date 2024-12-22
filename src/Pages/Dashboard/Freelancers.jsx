@@ -1,56 +1,32 @@
 import React, { useState } from "react";
 import { Table, Button, Space, Avatar } from "antd";
-import { Link } from "react-router-dom";
-import randomImg from "../../assets/randomProfile2.jpg";
-import { useCustomersQuery } from "../../redux/apiSlices/userSlice";
+import { Link, useNavigate } from "react-router-dom";
+import moment from "moment";
+import { FaStar } from "react-icons/fa6";
+import randomImg from "../../assets/salon-go-logo.png";
+import logo from "../../assets/salon-go-logo.png";
+import { useProfessionalsQuery } from "../../redux/apiSlices/userSlice";
 
-const Users = () => {
+const Freelancers = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const navigate = useNavigate();
   const [pageSize, setPageSize] = useState(10);
 
-  // Dummy data for users
-  const users = {
-    data: {
-      data: [
-        {
-          id: "1",
-          name: "John Doe",
-          email: "john@example.com",
-          role: "Admin",
-          status: "Active",
-          profileImg: "https://randomuser.me/api/portraits/men/1.jpg",
-        },
-        {
-          id: "2",
-          name: "Jane Smith",
-          email: "jane@example.com",
-          role: "Customer",
-          status: "Inactive",
-          profileImg: "https://randomuser.me/api/portraits/women/2.jpg",
-        },
-        {
-          id: "3",
-          name: "Sam Wilson",
-          email: "sam@example.com",
-          role: "Vendor",
-          status: "Pending",
-          profileImg: "https://randomuser.me/api/portraits/men/3.jpg",
-        },
-        // Add more dummy users as needed
-      ],
-    },
-  };
+  const { data: professionals, isLoading } = useProfessionalsQuery(true);
 
-  const { data: customers, isLoading } = useCustomersQuery();
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <img src={logo} alt="" />
+      </div>
+    );
+  }
 
-  if (isLoading) return <div>Loading...</div>;
+  const data = professionals?.data?.data;
 
-  const data = customers?.data?.data;
-
-  console.log(data);
+  // console.log(data);
 
   const onSelectChange = (newSelectedRowKeys) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
 
@@ -58,19 +34,18 @@ const Users = () => {
     {
       title: "Id",
       dataIndex: "_id",
-      key: "id",
+      key: "_id",
     },
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
       render: (text, record) => {
-        const name = record?.auth?.name || "Unknown";
-        const imgUrl = record?.profile || randomImg;
-        const fullImgUrl = imgUrl.startsWith("http")
+        const name = record?.auth?.name;
+        const imgUrl = record.profile || randomImg;
+        const fullImgUrl = imgUrl?.startsWith("http")
           ? imgUrl
           : `${import.meta.env.VITE_BASE_URL}${imgUrl}`;
-
         return (
           <Space>
             <Avatar src={fullImgUrl} alt={name} size="large" />
@@ -79,11 +54,17 @@ const Users = () => {
         );
       },
     },
-
     {
       title: "Email",
-      dataIndex: ["auth", "email"],
+      dataIndex: "email",
       key: "email",
+      render: (text, record) => {
+        return (
+          <Space>
+            <span>{record?.auth?.email}</span>
+          </Space>
+        );
+      },
     },
     {
       title: "Address",
@@ -98,9 +79,29 @@ const Users = () => {
       },
     },
     {
-      title: "Role",
-      dataIndex: ["auth", "role"],
-      key: "role",
+      title: "Professional Since",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (date) => moment(date).format("Do MMM, YYYY"),
+    },
+    {
+      title: "Total Reviews",
+      dataIndex: "totalReviews",
+      key: "totalReviews",
+      align: "center",
+      sorter: (a, b) => a.vendor.totalReviews - b.vendor.totalReviews,
+    },
+    {
+      title: "Rating",
+      dataIndex: "rating",
+      key: "rating",
+      sorter: (a, b) => a.vendor.rating - b.vendor.rating,
+      render: (rating) => (
+        <span className="flex items-center jus gap-1">
+          <FaStar />
+          <p>{rating}</p>
+        </span>
+      ),
     },
     {
       title: "Status",
@@ -119,24 +120,29 @@ const Users = () => {
             color = "orange";
             break;
           default:
-            color = "gray"; // Default color for unknown statuses
+            color = "gray";
         }
-
         return <span style={{ color }}>{status}</span>;
       },
     },
     {
       title: "Actions",
       key: "actions",
+      align: "center",
       render: (text, record) => (
         <Space>
-          <Link to={`/dashboard/USER/${record._id}`}>
+          <Link
+            to={`/dashboard/${record?.auth?.role.toLowerCase()}/${record._id}`}
+          >
             <Button className="bg-[#FFF4E3] text-[#F3B806] border-none">
               Details
             </Button>
           </Link>
 
-          <Button className="border border-red-600 text-red-700 ">
+          <Button
+            className="border border-red-600 text-red-700 "
+            onClick={() => handleRestrict(record.id)}
+          >
             Restrict
           </Button>
         </Space>
@@ -174,6 +180,10 @@ const Users = () => {
     ],
   };
 
+  const handleRestrict = (id) => {
+    console.log(`Restrict clicked for user with id: ${id}`);
+  };
+
   return (
     <Table
       className="bg-white"
@@ -187,8 +197,9 @@ const Users = () => {
       columns={columns}
       dataSource={data}
       rowKey={(record) => record._id}
+      rowSelection={rowSelection}
     />
   );
 };
 
-export default Users;
+export default Freelancers;

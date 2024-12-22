@@ -7,6 +7,7 @@ import rentMeLogo from "../../../assets/navLogo.png";
 const dummyData = [
   {
     _id: "1",
+    key: "1",
     orderId: "ORD12345",
     customerId: { name: "John Doe" },
     professionalId: { name: "Beauty Professional A" },
@@ -19,6 +20,7 @@ const dummyData = [
   },
   {
     _id: "2",
+    key: "2",
     orderId: "ORD12346",
     customerId: { name: "Jane Smith" },
     professionalId: { name: "Beauty Professional B" },
@@ -31,6 +33,7 @@ const dummyData = [
   },
   {
     _id: "3",
+    key: "3",
     orderId: "ORD12347",
     customerId: { name: "Emily Johnson" },
     professionalId: { name: "Beauty Professional C" },
@@ -182,7 +185,7 @@ const RunningOrderTable = ({ filterProps }) => {
   return (
     <div className="bg-white p-3 rounded-2xl">
       <div className="flex items-center justify-between">
-        <h1 className="font-bold">Running Orders</h1>
+        <h1 className="font-bold">Reservations</h1>
         {/* Search Bar */}
         <Input
           placeholder="Search orders"

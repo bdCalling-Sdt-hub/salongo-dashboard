@@ -51,9 +51,19 @@ const Sidebar = () => {
       label: <Link to="/banners">Banners</Link>,
     },
     {
-      key: "/category",
+      key: "/Salon",
       icon: <BiSolidCategoryAlt size={24} />,
-      label: <Link to="/category">Category</Link>,
+      label: "Salon",
+      children: [
+        {
+          key: "category",
+          label: (
+            <Link to="/category" className="text-[#6B6B6B] hover:text-white">
+              Category
+            </Link>
+          ),
+        },
+      ],
     },
     {
       key: "/users",
@@ -61,9 +71,30 @@ const Sidebar = () => {
       label: <Link to="/users">Users</Link>,
     },
     {
-      key: "/vendors",
+      key: "/subMenuVendors",
       icon: <PiUserPlus size={24} />,
-      label: <Link to="/vendors">Vendors</Link>,
+      label: "Barbers",
+      children: [
+        {
+          key: "/professionals",
+          label: (
+            <Link
+              to="/professionals"
+              className="text-[#6B6B6B] hover:text-white"
+            >
+              Professionals
+            </Link>
+          ),
+        },
+        {
+          key: "/freelancers",
+          label: (
+            <Link to="/freelancers" className="text-[#6B6B6B] hover:text-white">
+              Freelancers
+            </Link>
+          ),
+        },
+      ],
     },
     // {
     //   key: "/promotion",

@@ -1,116 +1,153 @@
-import React from "react";
-import { Collapse, Typography } from "antd";
+import React, { useState } from "react";
+import { Collapse, Input } from "antd";
+import { useAllCategoriesQuery } from "../../redux/apiSlices/categorySlice";
+import logo from "../../assets/logo.png";
+
 const { Panel } = Collapse;
+const { Search } = Input;
 
 const Category = () => {
-  // Updated dummy data for salon categories
-  const categories = [
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const { data: categoryData, isLoading } = useAllCategoriesQuery();
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <img src={logo} alt="" />
+      </div>
+    );
+  }
+
+  const categories = categoryData?.data?.categories;
+  console.log(categories);
+
+  const categoriesData = [
     {
       id: 1,
       name: "Hair Services",
+      description:
+        "Comprehensive hair care services including cuts, styling, and treatments.",
       subCategories: [
         {
-          id: 101,
-          name: "Haircuts",
-          subCategories: [
-            { id: 1011, name: "Men's Haircut" },
-            { id: 1012, name: "Women's Haircut" },
-          ],
+          name: "Men's Haircut",
+          description: "Classic and modern haircuts for men.",
         },
         {
-          id: 102,
-          name: "Hair Treatments",
-          subCategories: [
-            { id: 1021, name: "Coloring" },
-            { id: 1022, name: "Straightening" },
-          ],
+          name: "Women's Hair Styling",
+          description: "Customized hair styles for women.",
         },
         {
-          id: 103,
-          name: "Hair Styling",
-          subCategories: [
-            { id: 1031, name: "Braids" },
-            { id: 1032, name: "Updos" },
-          ],
+          name: "Color Treatments",
+          description: "Hair coloring and highlights services.",
+        },
+        {
+          name: "Spa Treatments",
+          description:
+            "Relaxing treatments like scalp massage and deep conditioning.",
         },
       ],
     },
     {
       id: 2,
       name: "Nail Services",
+      description:
+        "Nail care and enhancement services including manicures and pedicures.",
       subCategories: [
         {
-          id: 201,
-          name: "Manicures",
-          subCategories: [
-            { id: 2011, name: "Basic Manicure" },
-            { id: 2012, name: "Gel Manicure" },
-          ],
+          name: "Hand Care",
+          description: "Moisturizing and therapeutic hand treatments.",
         },
         {
-          id: 202,
-          name: "Pedicures",
-          subCategories: [
-            { id: 2021, name: "Basic Pedicure" },
-            { id: 2022, name: "Spa Pedicure" },
-          ],
+          name: "Foot Care",
+          description: "Includes pedicure and foot massage.",
+        },
+        {
+          name: "Decorative Nails",
+          description: "Nail art, embellishments, and gels.",
         },
       ],
     },
     {
       id: 3,
       name: "Beauty Services",
+      description:
+        "Wide range of beauty services including facials and waxing.",
       subCategories: [
         {
-          id: 301,
-          name: "Facial Treatments",
-          subCategories: [
-            { id: 3011, name: "Hydrating Facial" },
-            { id: 3012, name: "Anti-Aging Facial" },
-          ],
+          name: "Skin Care",
+          description: "Facials, masks, and skin treatments.",
         },
         {
-          id: 302,
-          name: "Makeup Services",
-          subCategories: [
-            { id: 3021, name: "Natural Makeup" },
-            { id: 3022, name: "Bridal Makeup" },
-          ],
+          name: "Hair Removal",
+          description: "Waxing and threading for unwanted hair.",
         },
         {
-          id: 303,
-          name: "Waxing",
-          subCategories: [
-            { id: 3031, name: "Leg Waxing" },
-            { id: 3032, name: "Facial Waxing" },
-          ],
+          name: "Facial Grooming",
+          description: "Eyebrow shaping, facial threading, and grooming.",
+        },
+      ],
+    },
+    {
+      id: 4,
+      name: "Wellness Services",
+      description: "Services to promote wellness and relaxation.",
+      subCategories: [
+        {
+          name: "Body Massage",
+          description: "Various massage techniques for relaxation.",
+        },
+        {
+          name: "Skin Exfoliation",
+          description: "Exfoliating treatments for smoother skin.",
         },
       ],
     },
   ];
 
-  const renderSubCategories = (subCategories) => {
-    return (
-      <Collapse>
-        {subCategories.map((sub) => (
-          <Panel header={sub.name} key={sub.id}>
-            {sub.subCategories && sub.subCategories.length > 0
-              ? renderSubCategories(sub.subCategories)
-              : null}
+  const filteredCategories = categoriesData.filter(
+    (category) =>
+      category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      category.subCategories.some((sub) =>
+        sub.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+  );
+
+  return (
+    <div className="px-40">
+      <h1 className="text-4xl font-bold my-10 text-center">Categories</h1>
+      <Search
+        placeholder="Search categories or subcategories"
+        onChange={(e) => setSearchTerm(e.target.value)}
+        style={{ marginBottom: 20 }}
+      />
+      <p className="my-3">
+        Total Services:{" "}
+        <span className="font-semibold">{categoriesData.length} Items</span>{" "}
+        Found
+      </p>
+      <Collapse accordion>
+        {filteredCategories.map((category) => (
+          <Panel header={category.name} key={category.id}>
+            <p className="text-xl font-semibold border-b-2 pb-2">
+              {category.description}
+            </p>
+            <ul className="my-5 bg-[#f8eeee] p-5 rounded-2xl">
+              <h1 className="text-lg font-semibold border-b-2 w-[30%] mb-2">
+                Sub - Categories
+              </h1>
+              {category.subCategories.map((sub, index) => (
+                <ul key={index} className="list-disc ml-5">
+                  <li>
+                    <span className="font-semibold">{sub.name}</span> -{" "}
+                    {sub.description}
+                  </li>
+                </ul>
+              ))}
+            </ul>
           </Panel>
         ))}
       </Collapse>
-    );
-  };
-
-  return (
-    <div className="category-page w-[70%] mx-auto">
-      {categories.map((category) => (
-        <div key={category.id} className="category">
-          <Typography.Title level={3}>{category.name}</Typography.Title>
-          {renderSubCategories(category.subCategories)}
-        </div>
-      ))}
     </div>
   );
 };

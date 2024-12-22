@@ -31,6 +31,7 @@ import Banners from "../Pages/Dashboard/Banners";
 import EditBanners from "../components/ui/Banners/EditBanners";
 import AddBanners from "../components/ui/Banners/AddBanners";
 import Category from "../Pages/Dashboard/Category";
+import Freelancers from "../Pages/Dashboard/Freelancers";
 
 const router = createBrowserRouter([
   {
@@ -63,7 +64,7 @@ const router = createBrowserRouter([
         element: <EditBanners />,
       },
       {
-        path: "/user/profile/:id",
+        path: "/dashboard/:role/:id",
         element: <User />,
       },
       {
@@ -75,10 +76,13 @@ const router = createBrowserRouter([
         element: <Users />,
       },
       {
-        path: "/vendors",
+        path: "/professionals",
         element: <Vendors />,
       },
-
+      {
+        path: "/freelancers",
+        element: <Freelancers />,
+      },
       {
         path: "/promotion",
         element: <Promotion />,
@@ -124,10 +128,10 @@ const router = createBrowserRouter([
         element: <ChangePassword />,
       },
 
-      {
-        path: "/profile",
-        element: <AdminProfile />,
-      },
+      // {
+      //   path: "/profile",
+      //   element: <AdminProfile />,
+      // },
       {
         path: "/notification",
         element: <Notifications />,

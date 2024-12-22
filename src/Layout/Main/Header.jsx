@@ -36,12 +36,7 @@ const Header = () => {
             width: 45,
             height: 45,
           }}
-          src={
-            adminData?.profile
-              ? adminData?.profile ||
-                `${import.meta.env.VITE_BASE_URL}${adminData?.profile}`
-              : logo
-          }
+          src={`${import.meta.env.VITE_BASE_URL}${adminData?.profile}` || logo}
           alt="person-male--v2"
           className="clip"
         />

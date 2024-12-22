@@ -10,27 +10,28 @@ const userSlice = api.injectEndpoints({
         };
       },
     }),
-    users: builder.query({
+    customers: builder.query({
       query: () => {
         return {
           method: "GET",
-          url: "/user",
+          url: "/dashboard/all-customer",
         };
       },
     }),
     professionals: builder.query({
-      query: () => {
+      query: (params) => {
         return {
           method: "GET",
-          url: "/dashboard/all-professional",
+          url: `/dashboard/all-professional?isFreelancer=${params}`,
         };
       },
     }),
     userById: builder.query({
-      query: (id) => {
+      query: ({ role, id }) => {
+        console.log("slice", role, id);
         return {
           method: "GET",
-          url: `/user/profile/${id}`,
+          url: `/${role}/${id}`,
         };
       },
     }),
@@ -39,7 +40,7 @@ const userSlice = api.injectEndpoints({
 
 export const {
   useAdminQuery,
-  useUsersQuery,
+  useCustomersQuery,
   useProfessionalsQuery,
   useUserByIdQuery,
 } = userSlice;

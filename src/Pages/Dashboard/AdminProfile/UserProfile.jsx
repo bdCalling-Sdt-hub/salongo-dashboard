@@ -21,24 +21,26 @@ const PersonalInfo = () => {
   const [file, setFile] = useState(null);
   const [form] = Form.useForm();
 
-  const isLoading = false;
-
-  // const { data: fetchAdminProfile, isLoading } = useFetchAdminProfileQuery();
-  // const [updateAdminProfile] = useUpdateAdminProfileMutation();
-
-  const fetchAdminProfile = [];
+  const {
+    data: fetchAdminProfile,
+    isLoading,
+    refetch,
+  } = useFetchAdminProfileQuery();
+  const [updateAdminProfile] = useUpdateAdminProfileMutation();
 
   const adminData = fetchAdminProfile?.data;
+
+  console.log(adminData);
 
   useEffect(() => {
     if (adminData) {
       form.setFieldsValue({
-        name: adminData?.name,
-        email: adminData?.email,
+        name: adminData?.auth?.name,
+        email: adminData?.auth?.email,
         address: adminData?.address,
-        phone: adminData?.contact,
+        phone: adminData?.auth?.contact,
       });
-      setImgURL(`${baseUrl}${adminData?.profileImg}`);
+      setImgURL(`${baseUrl}${adminData?.profile}`);
       setContact(adminData?.contact);
     }
   }, [form, adminData]);
@@ -77,6 +79,7 @@ const PersonalInfo = () => {
       const response = await updateAdminProfile(formData);
 
       if (response.data) {
+        refetch();
         toast.success(response?.data?.message);
       } else {
         toast.error(response?.data?.message);

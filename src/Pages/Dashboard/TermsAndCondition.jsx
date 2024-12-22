@@ -6,7 +6,7 @@ import {
   useUpdateTermsAndConditionsMutation,
 } from "../../redux/apiSlices/termsAndConditionSlice";
 import toast from "react-hot-toast";
-import rentMeLogo from "../../assets/navLogo.png";
+import logo from "../../assets/salon-go-logo.png";
 
 const TermsAndCondition = () => {
   const editor = useRef(null);
@@ -28,7 +28,7 @@ const TermsAndCondition = () => {
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <img src={rentMeLogo} alt="" />
+        <img src={logo} alt="" />
       </div>
     );
   }
@@ -57,8 +57,7 @@ const TermsAndCondition = () => {
 
   const tabContent = {
     USER: termsAndConditionData,
-    VENDOR: termsAndConditionData,
-    CUSTOMER: termsAndConditionData,
+    PROFESSIONAL: termsAndConditionData,
   };
 
   return (
@@ -76,23 +75,13 @@ const TermsAndCondition = () => {
         </button>
         <button
           className={`px-4 rounded-2xl py-2 ${
-            selectedTab === "VENDOR"
+            selectedTab === "PROFESSIONAL"
               ? "bg-[#5c2579cc] text-white"
               : "bg-gray-200"
           }`}
-          onClick={() => setSelectedTab("VENDOR")}
+          onClick={() => setSelectedTab("PROFESSIONAL")}
         >
-          Vendors
-        </button>
-        <button
-          className={`px-4 rounded-2xl py-2 ${
-            selectedTab === "CUSTOMER"
-              ? "bg-[#5c2579cc] text-white"
-              : "bg-gray-200"
-          }`}
-          onClick={() => setSelectedTab("CUSTOMER")}
-        >
-          Customers
+          Professional
         </button>
       </div>
 

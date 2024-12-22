@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import moment from "moment";
 import { FaStar } from "react-icons/fa6";
 import randomImg from "../../assets/salon-go-logo.png";
-import logo from "../../assets/navLogo.png";
+import logo from "../../assets/salon-go-logo.png";
 import { useProfessionalsQuery } from "../../redux/apiSlices/userSlice";
 
 const Vendors = () => {
@@ -12,7 +12,7 @@ const Vendors = () => {
   const navigate = useNavigate();
   const [pageSize, setPageSize] = useState(10);
 
-  const { data: professionals, isLoading } = useProfessionalsQuery();
+  const { data: professionals, isLoading } = useProfessionalsQuery(false);
 
   if (isLoading) {
     return (
@@ -24,105 +24,7 @@ const Vendors = () => {
 
   const data = professionals?.data?.data;
 
-  console.log(data);
-
-  const dummyData = [
-    {
-      id: 1,
-      name: "John Doe",
-      email: "john.doe@example.com",
-      address: {
-        street: "123 Main St",
-        city: "Springfield",
-        state: "IL",
-        zip: "62704",
-        country: "USA",
-      },
-      vendor: {
-        totalReviews: 15,
-        rating: 4.5,
-      },
-      status: "Active",
-      createdAt: "2022-11-05T14:48:00.000Z",
-      profileImg: randomImg,
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      email: "jane.smith@example.com",
-      address: {
-        street: "456 Oak St",
-        city: "Lincoln",
-        state: "NE",
-        zip: "68508",
-        country: "USA",
-      },
-      vendor: {
-        totalReviews: 20,
-        rating: 3.8,
-      },
-      status: "Inactive",
-      createdAt: "2023-01-12T09:23:00.000Z",
-      profileImg: randomImg,
-    },
-    {
-      id: 3,
-      name: "Alice Johnson",
-      email: "alice.johnson@example.com",
-      address: {
-        street: "789 Maple Ave",
-        city: "Madison",
-        state: "WI",
-        zip: "53703",
-        country: "USA",
-      },
-      vendor: {
-        totalReviews: 12,
-        rating: 4.2,
-      },
-      status: "Pending",
-      createdAt: "2023-03-25T16:10:00.000Z",
-      profileImg: randomImg,
-    },
-    {
-      id: 4,
-      name: "Michael Brown",
-      email: "michael.brown@example.com",
-      address: {
-        street: "101 Pine St",
-        city: "Columbus",
-        state: "OH",
-        zip: "43215",
-        country: "USA",
-      },
-      vendor: {
-        totalReviews: 30,
-        rating: 5.0,
-      },
-      status: "Active",
-      createdAt: "2024-05-07T08:45:00.000Z",
-      profileImg: randomImg,
-    },
-    {
-      id: 5,
-      name: "Emma Wilson",
-      email: "emma.wilson@example.com",
-      address: {
-        street: "202 Cedar Dr",
-        city: "Denver",
-        state: "CO",
-        zip: "80202",
-        country: "USA",
-      },
-      vendor: {
-        totalReviews: 8,
-        rating: 3.5,
-      },
-      status: "Inactive",
-      createdAt: "2023-12-01T11:30:00.000Z",
-      profileImg: randomImg,
-    },
-  ];
+  // console.log(data);
 
   const onSelectChange = (newSelectedRowKeys) => {
     setSelectedRowKeys(newSelectedRowKeys);
@@ -133,6 +35,9 @@ const Vendors = () => {
       title: "Id",
       dataIndex: "_id",
       key: "_id",
+      render: (text, record) => {
+        return <p className="">{record._id.slice(0, 10)}...</p>;
+      },
     },
     {
       title: "Name",
@@ -177,21 +82,21 @@ const Vendors = () => {
       },
     },
     {
-      title: "Vendor Since",
+      title: "Professional Since",
       dataIndex: "createdAt",
       key: "createdAt",
       render: (date) => moment(date).format("Do MMM, YYYY"),
     },
     {
       title: "Total Reviews",
-      dataIndex: ["vendor", "totalReviews"],
+      dataIndex: "totalReviews",
       key: "totalReviews",
       align: "center",
       sorter: (a, b) => a.vendor.totalReviews - b.vendor.totalReviews,
     },
     {
       title: "Rating",
-      dataIndex: ["vendor", "rating"],
+      dataIndex: "rating",
       key: "rating",
       sorter: (a, b) => a.vendor.rating - b.vendor.rating,
       render: (rating) => (
@@ -203,18 +108,18 @@ const Vendors = () => {
     },
     {
       title: "Status",
-      dataIndex: "status",
+      dataIndex: ["auth", "status"],
       key: "status",
       render: (status) => {
         let color;
         switch (status) {
-          case "Active":
+          case "active":
             color = "green";
             break;
-          case "Inactive":
+          case "inactive":
             color = "red";
             break;
-          case "Pending":
+          case "pending":
             color = "orange";
             break;
           default:
@@ -229,7 +134,9 @@ const Vendors = () => {
       align: "center",
       render: (text, record) => (
         <Space>
-          <Link to={`/user/profile/${record.id}`}>
+          <Link
+            to={`/dashboard/${record?.auth?.role.toLowerCase()}/${record._id}`}
+          >
             <Button className="bg-[#FFF4E3] text-[#F3B806] border-none">
               Details
             </Button>
@@ -281,20 +188,23 @@ const Vendors = () => {
   };
 
   return (
-    <Table
-      className="bg-white"
-      pagination={{
-        pageSize: pageSize,
-        showSizeChanger: true,
-        pageSizeOptions: ["5", "10", "15"],
-        onShowSizeChange: (current, size) => setPageSize(size),
-        position: ["bottomCenter"],
-      }}
-      columns={columns}
-      dataSource={data}
-      rowKey={(record) => record.id}
-      rowSelection={rowSelection}
-    />
+    <>
+      <h1 className="text-3xl font-semibold mb-5">Professionals</h1>
+      <Table
+        className="bg-white"
+        pagination={{
+          pageSize: pageSize,
+          showSizeChanger: true,
+          pageSizeOptions: ["5", "10", "15"],
+          onShowSizeChange: (current, size) => setPageSize(size),
+          position: ["bottomCenter"],
+        }}
+        columns={columns}
+        dataSource={data}
+        rowKey={(record) => record._id}
+        rowSelection={rowSelection}
+      />
+    </>
   );
 };
 

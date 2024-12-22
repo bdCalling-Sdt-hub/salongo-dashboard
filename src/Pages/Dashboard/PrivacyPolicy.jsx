@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import JoditEditor from "jodit-react";
 import Title from "../../components/common/Title";
-import rentMeLogo from "../../assets/navLogo.png";
+import logo from "../../assets/salon-go-logo.png";
 import toast from "react-hot-toast";
 import {
   usePrivacyPolicyQuery,
@@ -12,29 +12,26 @@ const PrivacyPolicy = () => {
   const editor = useRef(null);
   const [content, setContent] = useState("");
   const [selectedTab, setSelectedTab] = useState("USER");
-  const isLoading = false;
 
   useEffect(() => {
     setContent(content);
   }, [selectedTab]);
 
-  // const {
-  //   data: privacyPolicy,
-  //   isLoading,
-  //   refetch,
-  // } = usePrivacyPolicyQuery(selectedTab);
+  const {
+    data: privacyPolicy,
+    isLoading,
+    refetch,
+  } = usePrivacyPolicyQuery(selectedTab);
 
-  // const [updatePricyPolicy] = useUpdatePricyPolicyMutation();
+  const [updatePricyPolicy] = useUpdatePricyPolicyMutation();
 
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <img src={rentMeLogo} alt="" />
+        <img src={logo} alt="" />
       </div>
     );
   }
-
-  const privacyPolicy = [];
 
   const privacyPolicyData = privacyPolicy?.content;
 
@@ -61,8 +58,7 @@ const PrivacyPolicy = () => {
 
   const tabContent = {
     USER: privacyPolicyData,
-    VENDOR: privacyPolicyData,
-    CUSTOMER: privacyPolicyData,
+    PROFESSIONAL: privacyPolicyData,
   };
 
   return (
@@ -80,23 +76,13 @@ const PrivacyPolicy = () => {
         </button>
         <button
           className={`px-4 rounded-2xl py-2 ${
-            selectedTab === "VENDOR"
+            selectedTab === "PROFESSIONAL"
               ? "bg-[#5c2579cc] text-white"
               : "bg-gray-200"
           }`}
-          onClick={() => setSelectedTab("VENDOR")}
+          onClick={() => setSelectedTab("PROFESSIONAL")}
         >
-          Vendors
-        </button>
-        <button
-          className={`px-4 rounded-2xl py-2 ${
-            selectedTab === "CUSTOMER"
-              ? "bg-[#5c2579cc] text-white"
-              : "bg-gray-200"
-          }`}
-          onClick={() => setSelectedTab("CUSTOMER")}
-        >
-          Customers
+          Professional
         </button>
       </div>
 
