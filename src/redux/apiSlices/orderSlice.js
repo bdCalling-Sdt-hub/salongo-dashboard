@@ -2,11 +2,11 @@ import { api } from "../api/baseApi";
 
 const orderSlice = api.injectEndpoints({
   endpoints: (builder) => ({
-    orders: builder.query({
+    reservations: builder.query({
       query: () => {
         return {
           method: "GET",
-          url: "/dashboard/orders",
+          url: "/dashboard/reservations",
         };
       },
     }),
@@ -21,4 +21,4 @@ const orderSlice = api.injectEndpoints({
   }),
 });
 
-export const { useOrdersQuery, useOrderProgressQuery } = orderSlice;
+export const { useReservationsQuery, useOrderProgressQuery } = orderSlice;

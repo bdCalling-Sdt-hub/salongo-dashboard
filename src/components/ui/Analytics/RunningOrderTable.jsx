@@ -1,7 +1,8 @@
 import { Table, Input, Tooltip } from "antd";
 import { useState, useEffect } from "react";
 import moment from "moment";
-import rentMeLogo from "../../../assets/navLogo.png";
+import logo from "../../../assets/salon-go-logo.png";
+import { useReservationsQuery } from "../../../redux/apiSlices/orderSlice";
 
 // Dummy data
 const dummyData = [
@@ -51,10 +52,16 @@ const RunningOrderTable = ({ filterProps }) => {
   const [searchText, setSearchText] = useState("");
   const [filteredData, setFilteredData] = useState(dummyData);
 
+  const { data: reservationsData, isLoading } = useReservationsQuery();
+
+  const reservationsInfo = reservationsData?.data?.data;
+
+  console.log(reservationsInfo);
+
   // Set filteredData whenever filterProps changes
   useEffect(() => {
     if (filterProps) {
-      const filtered = dummyData.filter(
+      const filtered = reservationsInfo.filter(
         (item) =>
           item.professionalId.name
             .toLowerCase()
@@ -63,9 +70,17 @@ const RunningOrderTable = ({ filterProps }) => {
       );
       setFilteredData(filtered);
     } else {
-      setFilteredData(dummyData);
+      setFilteredData(reservationsInfo);
     }
   }, [filterProps]);
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <img src={logo} alt="" />
+      </div>
+    );
+  }
 
   const handleSearch = (e) => {
     const value = e.target.value.toLowerCase();
@@ -80,8 +95,8 @@ const RunningOrderTable = ({ filterProps }) => {
     setFilteredData(filtered);
   };
 
-  const truncateWithEllipsis = (text, length = 20) =>
-    text.length > length ? `${text.slice(0, length)}...` : text;
+  // const truncateWithEllipsis = (text, length = 20) =>
+  //   text.length > length ? `${text.slice(0, length)}...` : text;
 
   const columns = [
     {
@@ -96,7 +111,7 @@ const RunningOrderTable = ({ filterProps }) => {
       key: "customerId",
       render: (customerId) => (
         <Tooltip title={customerId?.name}>
-          <span>{truncateWithEllipsis(customerId?.name)}</span>
+          <span>{customerId?.name}</span>
         </Tooltip>
       ),
       width: 150,
