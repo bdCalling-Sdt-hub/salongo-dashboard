@@ -1,6 +1,7 @@
-import { Button, Table } from "antd";
+import { Button, Table, Tooltip } from "antd";
 import { Link } from "react-router-dom";
 import moment from "moment";
+import { useReservationsQuery } from "../../../redux/apiSlices/orderSlice";
 
 const RunningOrdersTable = () => {
   // Dummy data for salon orders
@@ -37,7 +38,12 @@ const RunningOrdersTable = () => {
     },
   ];
 
-  const data = dummyOrders.slice(0, 3).map((order, index) => ({
+  const { data: reservation, isLoading } = useReservationsQuery();
+
+  const reservationData = reservation?.data?.data;
+  console.log(reservationData);
+
+  const data = reservationData.slice(0, 3).map((order, index) => ({
     ...order,
     key: order.orderId || index.toString(),
   }));
@@ -45,8 +51,15 @@ const RunningOrdersTable = () => {
   const columns = [
     {
       title: "Order Number",
-      dataIndex: "orderId",
+      dataIndex: "_id",
       key: "orderId",
+      render: (text, record) => {
+        return (
+          <Tooltip title={record?._id}>
+            <p className="">{record._id.slice(0, 10)}...</p>
+          </Tooltip>
+        );
+      },
     },
     {
       title: "Budget",
@@ -56,7 +69,7 @@ const RunningOrdersTable = () => {
     },
     {
       title: "Service",
-      dataIndex: "preference",
+      dataIndex: ["service", "title"],
       key: "preference",
     },
     {
@@ -71,7 +84,7 @@ const RunningOrdersTable = () => {
     <div className="border bg-white h-[300px] p-5 rounded-2xl">
       <div className="flex items-center justify-between">
         <h1 className="font-bold mb-2">Running Orders</h1>
-        <Link to={"/analytics"}>
+        <Link to={"/transactions"}>
           <Button className="bg-[#f6e7ff] border-[#f6e7ff]">View All</Button>
         </Link>
       </div>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Table, Button, Space, Avatar } from "antd";
+import { Table, Button, Space, Avatar, Tooltip } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import moment from "moment";
 import { FaStar } from "react-icons/fa6";
@@ -35,6 +35,13 @@ const Freelancers = () => {
       title: "Id",
       dataIndex: "_id",
       key: "_id",
+      render: (text, record) => {
+        return (
+          <Tooltip title={record._id}>
+            <p className="">{record._id.slice(0, 10)}...</p>
+          </Tooltip>
+        );
+      },
     },
     {
       title: "Name",

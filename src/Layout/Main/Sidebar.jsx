@@ -63,6 +63,25 @@ const Sidebar = () => {
             </Link>
           ),
         },
+        {
+          key: "subCategory",
+          label: (
+            <Link to="/subCategory" className="text-[#6B6B6B] hover:text-white">
+              Sub Category
+            </Link>
+          ),
+        },
+        {
+          key: "subSubCategory",
+          label: (
+            <Link
+              to="/subSubCategory"
+              className="text-[#6B6B6B] hover:text-white"
+            >
+              Sub-Sub Category
+            </Link>
+          ),
+        },
       ],
     },
     {

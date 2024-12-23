@@ -1,148 +1,104 @@
 import { Table, Input, Tooltip } from "antd";
 import { useState, useEffect } from "react";
 import moment from "moment";
-import logo from "../../../assets/salon-go-logo.png";
 import { useReservationsQuery } from "../../../redux/apiSlices/orderSlice";
 
-// Dummy data
 const dummyData = [
   {
     _id: "1",
     key: "1",
     orderId: "ORD12345",
-    customerId: { name: "John Doe" },
-    professionalId: { name: "Beauty Professional A" },
-    serviceId: { title: "Haircut" },
-    preference: "Standard",
+    customer: { auth: { name: "John Doe" } },
+    professional: { auth: { name: "Beauty Professional A" } },
+    service: { title: "Haircut" },
+    duration: 2,
     createdAt: "2024-12-12T08:00:00Z",
     amount: 50.0,
-    paymentStatus: "full",
     status: "confirmed",
-  },
-  {
-    _id: "2",
-    key: "2",
-    orderId: "ORD12346",
-    customerId: { name: "Jane Smith" },
-    professionalId: { name: "Beauty Professional B" },
-    serviceId: { title: "Facial" },
-    preference: "Deluxe",
-    createdAt: "2024-12-10T10:00:00Z",
-    amount: 80.0,
-    paymentStatus: "pending",
-    status: "ongoing",
-  },
-  {
-    _id: "3",
-    key: "3",
-    orderId: "ORD12347",
-    customerId: { name: "Emily Johnson" },
-    professionalId: { name: "Beauty Professional C" },
-    serviceId: { title: "Manicure" },
-    preference: "Premium",
-    createdAt: "2024-12-08T12:00:00Z",
-    amount: 40.0,
-    paymentStatus: "ongoing",
-    status: "rejected",
   },
 ];
 
 const RunningOrderTable = ({ filterProps }) => {
+  const { data: reservations, isLoading } = useReservationsQuery();
+  const reservationData = reservations?.data?.data || [];
+
   const [pageSize, setPageSize] = useState(5);
   const [searchText, setSearchText] = useState("");
   const [filteredData, setFilteredData] = useState(dummyData);
 
-  const { data: reservationsData, isLoading } = useReservationsQuery();
-
-  const reservationsInfo = reservationsData?.data?.data;
-
-  console.log(reservationsInfo);
-
-  // Set filteredData whenever filterProps changes
   useEffect(() => {
-    if (filterProps) {
-      const filtered = reservationsInfo.filter(
-        (item) =>
-          item.professionalId.name
-            .toLowerCase()
-            .includes(filterProps.toLowerCase()) ||
-          item.customerId.name.toLowerCase().includes(filterProps.toLowerCase())
-      );
-      setFilteredData(filtered);
-    } else {
-      setFilteredData(reservationsInfo);
-    }
-  }, [filterProps]);
+    const sourceData = reservationData.length ? reservationData : dummyData;
 
-  if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <img src={logo} alt="" />
-      </div>
-    );
-  }
+    const updatedData = sourceData.map((item) => ({
+      ...item,
+      key: item._id,
+    }));
+
+    const filtered = filterProps
+      ? updatedData.filter(
+          (item) =>
+            item?.customer?.auth?.name
+              .toLowerCase()
+              .includes(filterProps.toLowerCase()) ||
+            item?.professional?.auth?.name
+              .toLowerCase()
+              .includes(filterProps.toLowerCase())
+        )
+      : updatedData;
+
+    setFilteredData(filtered);
+  }, [reservationData, filterProps]);
 
   const handleSearch = (e) => {
     const value = e.target.value.toLowerCase();
     setSearchText(value);
 
-    // Filter data based on the search text
-    const filtered = dummyData.filter((item) =>
+    const sourceData = reservationData.length ? reservationData : dummyData;
+    const filtered = sourceData.filter((item) =>
       Object.values(item).some((field) =>
         String(field).toLowerCase().includes(value)
       )
     );
+
     setFilteredData(filtered);
   };
-
-  // const truncateWithEllipsis = (text, length = 20) =>
-  //   text.length > length ? `${text.slice(0, length)}...` : text;
 
   const columns = [
     {
       title: "Order Id",
-      dataIndex: "orderId",
+      dataIndex: "_id",
       key: "orderId",
       width: 150,
+      render: (id) => (
+        <Tooltip title={id}>
+          <span className="truncate w-[80px] inline-block">{id}</span>
+        </Tooltip>
+      ),
     },
     {
       title: "Customer Name",
-      dataIndex: "customerId",
+      dataIndex: ["customer", "auth", "name"],
       key: "customerId",
-      render: (customerId) => (
-        <Tooltip title={customerId?.name}>
-          <span>{customerId?.name}</span>
-        </Tooltip>
-      ),
       width: 150,
     },
     {
       title: "Professional Name",
-      dataIndex: "professionalId",
+      dataIndex: ["professional", "auth", "name"],
       key: "professionalId",
-      render: (professionalId) => (
-        <Tooltip title={professionalId?.name}>
-          <span>{truncateWithEllipsis(professionalId?.name)}</span>
-        </Tooltip>
-      ),
       width: 150,
     },
     {
       title: "Service",
-      dataIndex: "serviceId",
+      dataIndex: ["service", "title"],
       key: "serviceId",
-      render: (serviceId) => (
-        <Tooltip title={serviceId?.title}>
-          <span>{truncateWithEllipsis(serviceId?.title)}</span>
-        </Tooltip>
-      ),
       width: 150,
     },
     {
-      title: "Package",
-      dataIndex: "preference",
-      key: "preference",
+      title: "Duration",
+      dataIndex: "duration",
+      key: "duration",
       width: 150,
+      render: (record) => `${record} Hour`,
     },
     {
       title: "Order Date",
@@ -158,40 +114,15 @@ const RunningOrderTable = ({ filterProps }) => {
       width: 150,
     },
     {
-      title: "Payment Status",
-      dataIndex: "paymentStatus",
-      key: "paymentStatus",
-      width: 150,
-      render: (status) => {
-        let color;
-        if (status === "full") {
-          color = "green";
-        } else if (status === "pending") {
-          color = "orange";
-        } else if (status === "ongoing") {
-          color = "blue";
-        } else {
-          color = "black";
-        }
-        return <span style={{ color }}>{status}</span>;
-      },
-    },
-    {
-      title: "Order Status",
+      title: "Status",
       dataIndex: "status",
       key: "status",
       width: 150,
       render: (status) => {
-        let color;
-        if (status === "confirmed") {
-          color = "green";
-        } else if (status === "rejected") {
-          color = "red";
-        } else if (status === "ongoing") {
-          color = "blue";
-        } else {
-          color = "black";
-        }
+        let color = "black";
+        if (status === "completed") color = "green";
+        else if (status === "pending") color = "orange";
+        else if (status === "confirmed") color = "blue";
         return <span style={{ color }}>{status}</span>;
       },
     },
@@ -201,7 +132,6 @@ const RunningOrderTable = ({ filterProps }) => {
     <div className="bg-white p-3 rounded-2xl">
       <div className="flex items-center justify-between">
         <h1 className="font-bold">Reservations</h1>
-        {/* Search Bar */}
         <Input
           placeholder="Search orders"
           value={searchText}
@@ -220,6 +150,7 @@ const RunningOrderTable = ({ filterProps }) => {
         }}
         columns={columns}
         dataSource={filteredData}
+        loading={isLoading}
       />
     </div>
   );

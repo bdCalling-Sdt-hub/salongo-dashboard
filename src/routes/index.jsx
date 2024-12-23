@@ -5,7 +5,6 @@ import Home from "../Pages/Dashboard/Home";
 import Users from "../Pages/Dashboard/Users";
 import Admin from "../Pages/Dashboard/Admin";
 import PrivacyPolicy from "../Pages/Dashboard/PrivacyPolicy";
-
 import ChangePassword from "../Pages/Auth/ChangePassword";
 import Login from "../Pages/Auth/Login";
 import Subscription from "../Pages/Dashboard/Subscription";
@@ -14,24 +13,21 @@ import VerifyOtp from "../Pages/Auth/VerifyOtp";
 import ResetPassword from "../Pages/Auth/ResetPassword";
 import NotFound from "../NotFound";
 import Notifications from "../Pages/Dashboard/Notifications";
-import AdminProfile from "../Pages/Dashboard/AdminProfile/AdminProfile";
 import User from "../Pages/Dashboard/User";
-
 import Press from "../Pages/Dashboard/Press";
 import Transactions from "../Pages/Dashboard/Transactions";
-
 import Promotion from "../Pages/Dashboard/Promotion";
-
 import UserProfile from "../Pages/Dashboard/AdminProfile/UserProfile";
 import TermsAndCondition from "../Pages/Dashboard/TermsAndCondition";
-
 import Vendors from "../Pages/Dashboard/Vendors";
 import PrivateRoute from "./PrivateRoute";
 import Banners from "../Pages/Dashboard/Banners";
 import EditBanners from "../components/ui/Banners/EditBanners";
 import AddBanners from "../components/ui/Banners/AddBanners";
-import Category from "../Pages/Dashboard/Category";
 import Freelancers from "../Pages/Dashboard/Freelancers";
+import Category from "../Pages/Category/Category";
+import SubCategory from "../Pages/Category/subCategory";
+import SubSubCategory from "../Pages/Category/subSubCategory";
 
 const router = createBrowserRouter([
   {
@@ -70,6 +66,14 @@ const router = createBrowserRouter([
       {
         path: "/category",
         element: <Category />,
+      },
+      {
+        path: "/subCategory",
+        element: <SubCategory />,
+      },
+      {
+        path: "/subSubCategory",
+        element: <SubSubCategory />,
       },
       {
         path: "/users",

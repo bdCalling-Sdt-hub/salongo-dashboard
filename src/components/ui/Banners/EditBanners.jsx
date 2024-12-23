@@ -16,16 +16,16 @@ const EditBanners = () => {
   const [file, setFile] = useState(null);
   const [form] = Form.useForm();
   const { id } = useParams();
-  const isLoading = false;
-  // const { data: getBanner, isLoading, refetch } = useGetBannerByIdQuery(id);
-  // const [updateBanner] = useUpdateBannerMutation();
-  const getBanner = [];
+
+  const { data: getBanner, isLoading, refetch } = useGetBannerByIdQuery(id);
+  const [updateBanner] = useUpdateBannerMutation();
+
   const bannerData = getBanner?.data;
 
   useEffect(() => {
     if (bannerData?.imgUrl) {
-      setImgURL(`${import.meta.env.VITE_BASE_URL}${bannerData?.imgUrl}`);
-      setFile(`${import.meta.env.VITE_BASE_URL}${bannerData?.imgUrl}`);
+      setImgURL(`${bannerData?.imgUrl}`);
+      setFile(`${bannerData?.imgUrl}`);
     }
   }, [bannerData]);
 
@@ -156,6 +156,7 @@ const EditBanners = () => {
             </label>
             <p className="mt-2 text-sm text-gray-500">Click to upload image</p>
           </div>
+          <img src={imgURL} alt="" />
 
           <Form.Item name="isActive" label="Status" valuePropName="checked">
             <Switch className="" />

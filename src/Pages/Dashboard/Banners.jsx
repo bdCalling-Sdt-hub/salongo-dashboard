@@ -4,46 +4,26 @@ import { MdDelete } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import rentMeLogo from "../../assets/navLogo.png";
+import logo from "../../assets/salon-go-logo.png";
 import moment from "moment";
+import { useAllBannerQuery } from "../../redux/apiSlices/banenrSlice";
 
 const Banners = () => {
   const [pageSize, setPageSize] = useState(5);
-  const [isDeleting, setIsDeleting] = useState(false); // To handle loading state for delete operation
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  // Dummy data for banners
-  const dummyBanners = [
-    {
-      _id: "1",
-      imgUrl:
-        "https://img.freepik.com/premium-photo/wide-banner-with-many-random-square-hexagons-charcoal-dark-black-color_105589-1820.jpg",
-      title: "Banner 1",
-      description: "Description for banner 1",
-      link: "http://example.com",
-      createdAt: "2023-12-12T00:00:00Z",
-      isActive: true,
-    },
-    {
-      _id: "2",
-      imgUrl:
-        "https://img.freepik.com/premium-photo/wide-banner-with-many-random-square-hexagons-charcoal-dark-black-color_105589-1820.jpg",
-      title: "Banner 2",
-      description: "Description for banner 2",
-      link: "http://example.com",
-      createdAt: "2023-12-11T00:00:00Z",
-      isActive: false,
-    },
-    {
-      _id: "3",
-      imgUrl:
-        "https://img.freepik.com/premium-photo/wide-banner-with-many-random-square-hexagons-charcoal-dark-black-color_105589-1820.jpg",
-      title: "Banner 3",
-      description: "Description for banner 3",
-      link: "http://example.com",
-      createdAt: "2023-12-10T00:00:00Z",
-      isActive: true,
-    },
-  ];
+  const { data: banners, isLoading } = useAllBannerQuery();
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <img src={logo} alt="" />
+      </div>
+    );
+  }
+
+  const bannersData = banners?.data;
+  console.log(bannersData);
 
   const handleDelete = async (id) => {
     Modal.confirm({
@@ -66,7 +46,7 @@ const Banners = () => {
     });
   };
 
-  const bannerData = dummyBanners.map((banner) => ({
+  const bannerData = bannersData.map((banner) => ({
     ...banner,
     key: banner._id,
   }));
@@ -77,7 +57,11 @@ const Banners = () => {
       dataIndex: "imgUrl",
       key: "imgUrl",
       render: (img) => (
-        <img src={img} alt="Banner Image" className="rounded-2xl w-20 h-16" />
+        <img
+          src={`${import.meta.env.VITE_BASE_URL}${img}`}
+          alt="Banner Image"
+          className="rounded-2xl w-32 h-20"
+        />
       ),
     },
     {

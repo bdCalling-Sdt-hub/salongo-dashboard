@@ -124,7 +124,7 @@ const Category = () => {
       />
       <div className="flex justify-between items-center mb-5">
         <p className="my-3">
-          Total Services:{" "}
+          Total Categories:{" "}
           <span className="font-semibold">
             {filteredCategories.length} Items
           </span>{" "}
