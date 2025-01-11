@@ -82,6 +82,17 @@ const Sidebar = () => {
             </Link>
           ),
         },
+        {
+          key: "manage-categories",
+          label: (
+            <Link
+              to="/manage-categories"
+              className="text-[#6B6B6B] hover:text-white"
+            >
+              Manage Categories
+            </Link>
+          ),
+        },
       ],
     },
     {

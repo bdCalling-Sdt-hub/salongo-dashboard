@@ -28,6 +28,7 @@ import Freelancers from "../Pages/Dashboard/Freelancers";
 import Category from "../Pages/Category/Category";
 import SubCategory from "../Pages/Category/subCategory";
 import SubSubCategory from "../Pages/Category/subSubCategory";
+import ManageCategories from "../Pages/Category/ManageCategories";
 
 const router = createBrowserRouter([
   {
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
       {
         path: "/dashboard/:role/:id",
         element: <User />,
+      },
+      {
+        path: "/manage-categories",
+        element: <ManageCategories />,
       },
       {
         path: "/category",

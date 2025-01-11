@@ -4,41 +4,11 @@ import moment from "moment";
 import { useReservationsQuery } from "../../../redux/apiSlices/orderSlice";
 
 const RunningOrdersTable = () => {
-  // Dummy data for salon orders
-  const dummyOrders = [
-    {
-      orderId: "ORD001",
-      amount: 50,
-      preference: "Haircut",
-      createdAt: "2024-12-01T10:00:00Z",
-    },
-    {
-      orderId: "ORD002",
-      amount: 80,
-      preference: "Facial",
-      createdAt: "2024-12-03T14:00:00Z",
-    },
-    {
-      orderId: "ORD003",
-      amount: 40,
-      preference: "Manicure",
-      createdAt: "2024-12-05T09:30:00Z",
-    },
-    {
-      orderId: "ORD004",
-      amount: 120,
-      preference: "Hair Coloring",
-      createdAt: "2024-12-06T12:15:00Z",
-    },
-    {
-      orderId: "ORD005",
-      amount: 60,
-      preference: "Pedicure",
-      createdAt: "2024-12-08T08:45:00Z",
-    },
-  ];
-
   const { data: reservation, isLoading } = useReservationsQuery();
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
 
   const reservationData = reservation?.data?.data;
   console.log(reservationData);

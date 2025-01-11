@@ -9,6 +9,8 @@ import {
 } from "../../redux/apiSlices/categorySlice";
 import logo from "../../assets/logo.png";
 import toast from "react-hot-toast";
+import { FaEdit } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
 
 const { Search } = Input;
 
@@ -39,6 +41,10 @@ const SubSubCategory = () => {
   };
 
   const handleUpdate = (record) => {
+    try {
+    } catch {}
+  };
+  const handleDelete = (record) => {
     try {
     } catch {}
   };
@@ -79,14 +85,10 @@ const SubSubCategory = () => {
       key: "actions",
       align: "center",
       render: () => (
-        <>
-          <Button onClick={handleUpdate} type="link" className="bg-secondary">
-            Edit
-          </Button>
-          <Button type="link" className="text-red-500 border-red-500 me-3">
-            Delete
-          </Button>
-        </>
+        <div className="flex items-center justify-center gap-5">
+          <FaEdit onClick={handleUpdate} size={24} />
+          <MdDelete onClick={handleDelete} className="text-red-700" size={24} />
+        </div>
       ),
     },
   ];
