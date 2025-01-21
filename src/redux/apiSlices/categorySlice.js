@@ -11,14 +11,79 @@ const categorySlice = api.injectEndpoints({
       },
       providesTags: ["Category"],
     }),
+    addCategory: builder.mutation({
+      query: (data) => {
+        return {
+          method: "POST",
+          url: "/categories/category",
+          body: data,
+        };
+      },
+      invalidatesTags: ["Category"],
+    }),
+
+    updateCategory: builder.mutation({
+      query: ({ id, data }) => {
+        return {
+          method: "PATCH",
+          url: `/categories/category/${id}`,
+          body: data,
+        };
+      },
+      invalidatesTags: ["Category"],
+    }),
+
+    deleteCategory: builder.mutation({
+      query: (id) => {
+        return {
+          method: "DELETE",
+          url: `/categories/category/${id}`,
+        };
+      },
+      invalidatesTags: ["Category"],
+    }),
+
+    //sub-category
     allSubCategories: builder.query({
       query: () => {
         return {
           method: "GET",
-          url: "/categories/sub-categories",
+          url: "/categories/admin/sub-categories",
         };
       },
       providesTags: ["Category"],
+    }),
+
+    addSubCategory: builder.mutation({
+      query: (data) => {
+        return {
+          method: "POST",
+          url: "/categories/sub-category",
+          body: data,
+        };
+      },
+      invalidatesTags: ["Category"],
+    }),
+
+    updateSubCategory: builder.mutation({
+      query: ({ id, data }) => {
+        return {
+          method: "PATCH",
+          url: `/categories/sub-category/${id}`,
+          body: data,
+        };
+      },
+      invalidatesTags: ["Category"],
+    }),
+
+    deleteSubCategory: builder.mutation({
+      query: (id) => {
+        return {
+          method: "DELETE",
+          url: `/categories/sub-category/${id}`,
+        };
+      },
+      invalidatesTags: ["Category"],
     }),
 
     // Sub Sub Category
@@ -31,8 +96,10 @@ const categorySlice = api.injectEndpoints({
       },
       providesTags: ["Category"],
     }),
+
     addSubSubCategory: builder.mutation({
       query: (data) => {
+        console.log("in slice", data);
         return {
           method: "POST",
           url: "/categories/sub-sub-category",
@@ -41,6 +108,7 @@ const categorySlice = api.injectEndpoints({
       },
       invalidatesTags: ["Category"],
     }),
+
     updateSubSubCategory: builder.mutation({
       query: ({ id, data }) => {
         return {
@@ -60,26 +128,24 @@ const categorySlice = api.injectEndpoints({
       },
       invalidatesTags: ["Category"],
     }),
-
-    addCategory: builder.mutation({
-      query: (data) => {
-        return {
-          method: "POST",
-          url: "/categories/category",
-          body: data,
-        };
-      },
-      invalidatesTags: ["Category"],
-    }),
   }),
 });
 
 export const {
   useAllCategoriesQuery,
+  useAddCategoryMutation,
+  useUpdateCategoryMutation,
+  useDeleteCategoryMutation,
+
+  //sub-category
   useAllSubCategoriesQuery,
+  useAddSubCategoryMutation,
+  useUpdateSubCategoryMutation,
+  useDeleteSubCategoryMutation,
+
+  //sub-sub-category
   useAllSubSubCategoriesQuery,
   useAddSubSubCategoryMutation,
   useUpdateSubSubCategoryMutation,
   useDeleteSubSubCategoryMutation,
-  useAddCategoryMutation,
 } = categorySlice;

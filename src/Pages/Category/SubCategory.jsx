@@ -3,6 +3,7 @@ import { Collapse, Input, Modal, Button, Form } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import {
   useAddCategoryMutation,
+  useAddSubCategoryMutation,
   useAllSubCategoriesQuery,
 } from "../../redux/apiSlices/categorySlice";
 import logo from "../../assets/logo.png";
@@ -20,7 +21,7 @@ const SubCategory = () => {
   const [form] = Form.useForm();
 
   const { data: categoryData, isLoading } = useAllSubCategoriesQuery();
-  const [addCategory] = useAddCategoryMutation();
+  const [addSubCategory] = useAddSubCategoryMutation();
 
   const handleAddCategory = async (values) => {
     console.log("Submitted values:", values);
@@ -37,7 +38,7 @@ const SubCategory = () => {
         return;
       }
 
-      const response = await addCategory(formData);
+      const response = await addSubCategory(formData);
       console.log(response);
 
       if (response.data.success) {

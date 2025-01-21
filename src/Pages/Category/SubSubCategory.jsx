@@ -24,8 +24,9 @@ const SubSubCategory = () => {
   const [updateSubCategory] = useUpdateSubSubCategoryMutation();
 
   const handleAddCategory = async (values) => {
+    console.log(values);
     try {
-      const response = await addSubSubCategory({ name: values.name });
+      const response = await addSubSubCategory(values);
 
       if (response.data.success) {
         toast.success(response?.data?.message);

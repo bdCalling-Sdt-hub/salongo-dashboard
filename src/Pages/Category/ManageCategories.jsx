@@ -4,7 +4,14 @@ import {
   useAllCategoriesQuery,
   useAllSubCategoriesQuery,
   useAllSubSubCategoriesQuery,
+  useDeleteCategoryMutation,
+  useDeleteSubCategoryMutation,
+  useUpdateCategoryMutation,
+  useUpdateSubCategoryMutation,
 } from "../../redux/apiSlices/categorySlice";
+import { MdOutlineAddPhotoAlternate } from "react-icons/md";
+import bgWhite from "../../assets/whiteBG.png";
+import toast from "react-hot-toast";
 
 const ManageCategories = () => {
   const { data: categories, isLoading: isLoadingCategories } =
@@ -14,11 +21,22 @@ const ManageCategories = () => {
   const { data: subSubCategories, isLoading: isLoadingSubSubCategories } =
     useAllSubSubCategoriesQuery();
 
+  const [updateCategory] = useUpdateCategoryMutation();
+  const [updateSubCategory] = useUpdateSubCategoryMutation();
+
+  const [deleteCategory] = useDeleteCategoryMutation();
+  const [deleteSubCategory] = useDeleteSubCategoryMutation();
+
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [assignType, setAssignType] = useState(null);
+  const [imgURL, setImgURL] = useState(bgWhite);
+  const [file, setFile] = useState(null);
   const [form] = Form.useForm();
+
+  console.log("dsrgaeg", selectedItem);
 
   if (
     isLoadingCategories ||
@@ -40,6 +58,14 @@ const ManageCategories = () => {
   const handleEdit = (record) => {
     setSelectedItem(record);
     form.setFieldsValue({ name: record.name });
+
+    // Set the image URL from the record if available
+    if (record.image) {
+      setImgURL(record.image);
+    } else {
+      setImgURL(bgWhite);
+    }
+
     setIsEditModalOpen(true);
   };
 
@@ -50,6 +76,7 @@ const ManageCategories = () => {
 
   const handleAssign = (record) => {
     setSelectedItem(record);
+    setAssignType(record.type);
     setIsAssignModalOpen(true);
   };
 
@@ -66,7 +93,7 @@ const ManageCategories = () => {
       key: "_id",
       render: (record) => (
         <Tooltip title={record}>
-          <p>{record.slice(0, 10)}...</p>
+          <p>{record}...</p>
         </Tooltip>
       ),
     },
@@ -93,7 +120,10 @@ const ManageCategories = () => {
           <Button
             type="default"
             size="small"
-            onClick={() => handleAssign(record)}
+            onClick={() => {
+              handleAssign(record);
+              setAssignType(record.type);
+            }}
           >
             Assign
           </Button>
@@ -103,23 +133,87 @@ const ManageCategories = () => {
   ];
 
   // Modal Handlers
-  const handleCancelEdit = () => setIsEditModalOpen(false);
-  const handleCancelDelete = () => setIsDeleteModalOpen(false);
-  const handleCancelAssign = () => setIsAssignModalOpen(false);
-
-  const handleFinishEdit = (values) => {
-    console.log("Edited:", { ...selectedItem, ...values });
+  const handleCancelEdit = () => {
     setIsEditModalOpen(false);
+    setImgURL(bgWhite);
+    setFile(null);
   };
 
-  const handleConfirmDelete = () => {
-    console.log("Deleted:", selectedItem);
+  const handleFinishEdit = async (values) => {
+    console.log(values);
+    try {
+      const formData = new FormData();
+      const data = {
+        name: values.name,
+      };
+      formData.append("data", JSON.stringify(data));
+      if (file) {
+        formData.append("image", file);
+      }
+
+      // Determine if it's a category or subCategory update
+      if (selectedItem.type === "category") {
+        const response = await updateCategory({
+          id: selectedItem._id,
+          data: formData,
+        }).unwrap();
+        if (response.success) {
+          toast.success(response?.message);
+        }
+      } else if (selectedItem.type === "subCategory") {
+        const response = await updateSubCategory({
+          id: selectedItem._id,
+          data: formData,
+        }).unwrap();
+        if (response.success) {
+          toast.success(response?.message);
+        }
+      }
+
+      setIsEditModalOpen(false);
+      setImgURL(bgWhite);
+      setFile(null);
+    } catch (error) {
+      console.error("Failed to update item:", error);
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      if (selectedItem.type === "category") {
+        const response = await deleteCategory(selectedItem._id).unwrap();
+        if (response.success) {
+          toast.success(response.message);
+        }
+      } else if (selectedItem.type === "subCategory") {
+        const response = await deleteSubCategory(selectedItem._id).unwrap();
+        if (response.success) {
+          toast.success(response.message);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to delete item:", error);
+      toast.error("Failed to delete item.");
+    }
     setIsDeleteModalOpen(false);
   };
+
+  const handleCancelDelete = () => setIsDeleteModalOpen(false);
+
+  const handleCancelAssign = () => setIsAssignModalOpen(false);
 
   const handleConfirmAssign = (values) => {
     console.log("Assigned:", values, selectedItem);
     setIsAssignModalOpen(false);
+  };
+
+  const onChangeImage = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      const imgUrl = URL.createObjectURL(selectedFile);
+      setImgURL(imgUrl);
+      setFile(selectedFile);
+    }
   };
 
   return (
@@ -141,24 +235,11 @@ const ManageCategories = () => {
       <div>
         <h2 className="text-2xl font-bold mb-4">Subcategories</h2>
         <Table
-          dataSource={subCategoryData.map((item, index) => ({
+          dataSource={subCategoryData?.map((item, index) => ({
             ...item,
             key: item._id || index,
           }))}
           columns={columns("Subcategory")}
-          pagination={{ pageSize: 5 }}
-        />
-      </div>
-
-      {/* Sub-Subcategories */}
-      <div>
-        <h2 className="text-2xl font-bold mb-4">Sub-Subcategories</h2>
-        <Table
-          dataSource={subSubCategoryData.map((item, index) => ({
-            ...item,
-            key: item._id || index,
-          }))}
-          columns={columns("SubSubcategory")}
           pagination={{ pageSize: 5 }}
         />
       </div>
@@ -178,6 +259,31 @@ const ManageCategories = () => {
           >
             <Input placeholder="Enter name" />
           </Form.Item>
+          <div className="flex flex-col items-center mb-4">
+            <input
+              onChange={onChangeImage}
+              type="file"
+              id="img"
+              style={{ display: "none" }}
+            />
+            <label
+              htmlFor="img"
+              className="relative w-full h-80 cursor-pointer border border-gray-300 bg-white bg-cover bg-center shadow-sm hover:shadow-lg transition-shadow duration-300"
+              style={{
+                backgroundImage: `url(${imgURL})`,
+              }}
+            >
+              {!imgURL && (
+                <div className="absolute inset-0 flex items-center justify-center hover:bg-gray-200 transition-colors">
+                  <MdOutlineAddPhotoAlternate
+                    size={60}
+                    className="text-gray-600"
+                  />
+                </div>
+              )}
+            </label>
+            <p className="mt-2 text-sm text-gray-500">Click to upload image</p>
+          </div>
           <Button type="primary" htmlType="submit">
             Submit
           </Button>
@@ -208,18 +314,17 @@ const ManageCategories = () => {
           <div className="flex gap-4">
             <Form.Item className="w-full">
               <Checkbox.Group
-                options={categoryData.map((cat) => ({
-                  label: cat.name,
-                  value: cat._id,
-                }))}
-              />
-            </Form.Item>
-            <Form.Item className="w-full">
-              <Checkbox.Group
-                options={subSubCategoryData.map((subSub) => ({
-                  label: subSub.name,
-                  value: subSub._id,
-                }))}
+                options={
+                  assignType === "category"
+                    ? subCategoryData?.map((subCat) => ({
+                        label: subCat.name,
+                        value: subCat._id,
+                      }))
+                    : subSubCategoryData?.map((subSub) => ({
+                        label: subSub.name,
+                        value: subSub._id,
+                      }))
+                }
               />
             </Form.Item>
           </div>
