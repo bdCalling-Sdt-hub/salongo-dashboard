@@ -1,18 +1,30 @@
 import React, { useState } from "react";
-import { Table, Button, Space, Avatar } from "antd";
+import { Table, Button, Space, Avatar, Badge, Tooltip } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import moment from "moment";
 import { FaStar } from "react-icons/fa6";
 import randomImg from "../../assets/salon-go-logo.png";
 import logo from "../../assets/salon-go-logo.png";
-import { useProfessionalsQuery } from "../../redux/apiSlices/userSlice";
+import {
+  useAdminApproveMutation,
+  useProfessionalsQuery,
+  useRestrictUserMutation,
+} from "../../redux/apiSlices/userSlice";
+import toast from "react-hot-toast";
+import { IoShieldCheckmark } from "react-icons/io5";
 
 const Vendors = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const navigate = useNavigate();
   const [pageSize, setPageSize] = useState(10);
 
-  const { data: professionals, isLoading } = useProfessionalsQuery(false);
+  const {
+    data: professionals,
+    isLoading,
+    refetch,
+  } = useProfessionalsQuery(false);
+  const [restrictUser] = useRestrictUserMutation();
+  const [adminApprove] = useAdminApproveMutation();
 
   if (isLoading) {
     return (
@@ -24,10 +36,36 @@ const Vendors = () => {
 
   const data = professionals?.data?.data;
 
-  // console.log(data);
+  console.log(data);
 
   const onSelectChange = (newSelectedRowKeys) => {
     setSelectedRowKeys(newSelectedRowKeys);
+  };
+
+  const handleAdminApprove = async (id) => {
+    try {
+      const res = await adminApprove(id).unwrap();
+      console.log(res);
+      if (res.success) {
+        refetch();
+        toast.success("Admin approved successfully");
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
+  };
+
+  const handleRestrictUser = async (id) => {
+    try {
+      const res = await restrictUser(id).unwrap();
+      console.log(res);
+      if (res.success) {
+        refetch();
+        toast.success("User status changed successfully");
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
   };
 
   const columns = [
@@ -131,23 +169,48 @@ const Vendors = () => {
     {
       title: "Actions",
       key: "actions",
-      align: "center",
+
       render: (text, record) => (
         <Space>
           <Link
             to={`/dashboard/${record?.auth?.role.toLowerCase()}/${record._id}`}
           >
-            <Button className="bg-[#FFF4E3] text-[#F3B806] border-none">
+            <Button className="bg-[#f5c783] text-black border-none">
               Details
             </Button>
           </Link>
 
-          <Button
-            className="border border-red-600 text-red-700 "
-            onClick={() => handleRestrict(record.id)}
-          >
-            Restrict
-          </Button>
+          {record?.auth?.status === "active" ? (
+            <Button
+              className="border-red-600 text-red-700"
+              onClick={() => handleRestrictUser(record?.auth?._id)}
+            >
+              Restrict
+            </Button>
+          ) : (
+            <Button
+              className="border-green-600 text-green-700"
+              onClick={() => handleRestrictUser(record?.auth?._id)}
+            >
+              Activate
+            </Button>
+          )}
+
+          {record?.auth?.approvedByAdmin === false ? (
+            <Button
+              onClick={() => handleAdminApprove(record?.auth?._id)}
+              className="text-blue-700 border-blue-600"
+            >
+              Admin Approve
+            </Button>
+          ) : (
+            <Tooltip
+              title="Approved By Admin"
+              className="px-2 py-1 text-xs font-semibold rounded-full"
+            >
+              <IoShieldCheckmark size={40} className="text-blue-500" />
+            </Tooltip>
+          )}
         </Space>
       ),
     },

@@ -26,9 +26,9 @@ const VerifyOtp = () => {
         email,
         oneTimeCode: parseInt(otp),
       }).unwrap();
-
+      console.log(response);
       if (response?.success) {
-        localStorage.setItem("Authorization", response.data);
+        localStorage.setItem("Authorization", response?.data?.data);
         navigate(`/auth/reset-password?email=${email}`);
       } else {
         console.error("OTP verification failed");

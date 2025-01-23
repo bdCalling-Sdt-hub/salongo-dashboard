@@ -35,6 +35,24 @@ const userSlice = api.injectEndpoints({
         };
       },
     }),
+
+    restrictUser: builder.mutation({
+      query: (id) => {
+        return {
+          method: "PATCH",
+          url: `/user/restrict/${id}`,
+        };
+      },
+    }),
+
+    adminApprove: builder.mutation({
+      query: (id) => {
+        return {
+          method: "PATCH",
+          url: `/user/approve/${id}`,
+        };
+      },
+    }),
   }),
 });
 
@@ -43,4 +61,6 @@ export const {
   useCustomersQuery,
   useProfessionalsQuery,
   useUserByIdQuery,
+  useRestrictUserMutation,
+  useAdminApproveMutation,
 } = userSlice;

@@ -5,14 +5,23 @@ import moment from "moment";
 import { FaStar } from "react-icons/fa6";
 import randomImg from "../../assets/salon-go-logo.png";
 import logo from "../../assets/salon-go-logo.png";
-import { useProfessionalsQuery } from "../../redux/apiSlices/userSlice";
+import {
+  useProfessionalsQuery,
+  useRestrictUserMutation,
+} from "../../redux/apiSlices/userSlice";
+import toast from "react-hot-toast";
 
 const Freelancers = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const navigate = useNavigate();
   const [pageSize, setPageSize] = useState(10);
 
-  const { data: professionals, isLoading } = useProfessionalsQuery(true);
+  const {
+    data: professionals,
+    isLoading,
+    refetch,
+  } = useProfessionalsQuery(true);
+  const [restrictUser] = useRestrictUserMutation();
 
   if (isLoading) {
     return (
@@ -28,6 +37,19 @@ const Freelancers = () => {
 
   const onSelectChange = (newSelectedRowKeys) => {
     setSelectedRowKeys(newSelectedRowKeys);
+  };
+
+  const handleRestrictUser = async (id) => {
+    try {
+      const res = await restrictUser(id).unwrap();
+      console.log(res);
+      if (res.success) {
+        refetch();
+        toast.success("User status changed successfully");
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
   };
 
   const columns = [
@@ -141,17 +163,26 @@ const Freelancers = () => {
           <Link
             to={`/dashboard/${record?.auth?.role.toLowerCase()}/${record._id}`}
           >
-            <Button className="bg-[#FFF4E3] text-[#F3B806] border-none">
+            <Button className="bg-[#ffd08a] text-black border-none">
               Details
             </Button>
           </Link>
 
-          <Button
-            className="border border-red-600 text-red-700 "
-            onClick={() => handleRestrict(record.id)}
-          >
-            Restrict
-          </Button>
+          {record?.auth?.status === "active" ? (
+            <Button
+              className="border-red-600 text-red-700"
+              onClick={() => handleRestrictUser(record.auth?._id)}
+            >
+              Restrict
+            </Button>
+          ) : (
+            <Button
+              className="border-green-600 text-green-700"
+              onClick={() => handleRestrictUser(record.auth?._id)}
+            >
+              Activate
+            </Button>
+          )}
         </Space>
       ),
     },
