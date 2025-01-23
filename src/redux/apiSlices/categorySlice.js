@@ -43,6 +43,17 @@ const categorySlice = api.injectEndpoints({
       invalidatesTags: ["Category"],
     }),
 
+    assignToCategory: builder.mutation({
+      query: ({ id, data }) => {
+        return {
+          method: "PATCH",
+          url: `/categories/add-remove-sub-category-from-category/${id}`,
+          body: data,
+        };
+      },
+      invalidatesTags: ["Category"],
+    }),
+
     //sub-category
     allSubCategories: builder.query({
       query: () => {
@@ -81,6 +92,17 @@ const categorySlice = api.injectEndpoints({
         return {
           method: "DELETE",
           url: `/categories/sub-category/${id}`,
+        };
+      },
+      invalidatesTags: ["Category"],
+    }),
+
+    assignToSubCategory: builder.mutation({
+      query: ({ id, data }) => {
+        return {
+          method: "PATCH",
+          url: `/categories/add-remove-sub-sub-category-to-sub-category/${id}`,
+          body: data,
         };
       },
       invalidatesTags: ["Category"],
@@ -136,12 +158,14 @@ export const {
   useAddCategoryMutation,
   useUpdateCategoryMutation,
   useDeleteCategoryMutation,
+  useAssignToCategoryMutation,
 
   //sub-category
   useAllSubCategoriesQuery,
   useAddSubCategoryMutation,
   useUpdateSubCategoryMutation,
   useDeleteSubCategoryMutation,
+  useAssignToSubCategoryMutation,
 
   //sub-sub-category
   useAllSubSubCategoriesQuery,

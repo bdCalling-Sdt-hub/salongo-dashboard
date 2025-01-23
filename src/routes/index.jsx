@@ -26,9 +26,10 @@ import EditBanners from "../components/ui/Banners/EditBanners";
 import AddBanners from "../components/ui/Banners/AddBanners";
 import Freelancers from "../Pages/Dashboard/Freelancers";
 import Category from "../Pages/Category/Category";
-import SubCategory from "../Pages/Category/subCategory";
+
 import SubSubCategory from "../Pages/Category/subSubCategory";
 import ManageCategories from "../Pages/Category/ManageCategories";
+import SubCategory from "../Pages/Category/SubCategory";
 
 const router = createBrowserRouter([
   {

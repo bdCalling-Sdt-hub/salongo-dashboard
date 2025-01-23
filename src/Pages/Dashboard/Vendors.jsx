@@ -45,7 +45,7 @@ const Vendors = () => {
       key: "name",
       render: (text, record) => {
         const name = record?.auth?.name;
-        const imgUrl = record.profile || randomImg;
+        const imgUrl = record?.auth?.profile || randomImg;
         const fullImgUrl = imgUrl?.startsWith("http")
           ? imgUrl
           : `${import.meta.env.VITE_BASE_URL}${imgUrl}`;

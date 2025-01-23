@@ -92,7 +92,11 @@ const SubCategory = () => {
         {category?.image && (
           <img
             className="w-[200px] object-cover h-[130px] rounded-2xl shadow-lg"
-            src={`${import.meta.env.VITE_BASE_URL}${category.image}`}
+            src={
+              category?.image?.startsWith("http")
+                ? category?.image
+                : `${import.meta.env.VITE_BASE_URL}${category?.image}`
+            }
             alt="categoryImg"
           />
         )}

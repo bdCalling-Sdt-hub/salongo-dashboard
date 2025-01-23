@@ -4,6 +4,8 @@ import {
   useAllCategoriesQuery,
   useAllSubCategoriesQuery,
   useAllSubSubCategoriesQuery,
+  useAssignToCategoryMutation,
+  useAssignToSubCategoryMutation,
   useDeleteCategoryMutation,
   useDeleteSubCategoryMutation,
   useUpdateCategoryMutation,
@@ -22,7 +24,10 @@ const ManageCategories = () => {
     useAllSubSubCategoriesQuery();
 
   const [updateCategory] = useUpdateCategoryMutation();
+  const [assignToCategory] = useAssignToCategoryMutation();
+
   const [updateSubCategory] = useUpdateSubCategoryMutation();
+  const [assignToSubCategory] = useAssignToSubCategoryMutation();
 
   const [deleteCategory] = useDeleteCategoryMutation();
   const [deleteSubCategory] = useDeleteSubCategoryMutation();
@@ -36,7 +41,7 @@ const ManageCategories = () => {
   const [file, setFile] = useState(null);
   const [form] = Form.useForm();
 
-  console.log("dsrgaeg", selectedItem);
+  // console.log("dsrgaeg", selectedItem);
 
   if (
     isLoadingCategories ||
@@ -51,6 +56,8 @@ const ManageCategories = () => {
   }
 
   const categoryData = categories?.data || [];
+
+  console.log(categoryData);
   const subCategoryData = subCategories?.data || [];
   const subSubCategoryData = subSubCategories?.data || [];
 
@@ -108,7 +115,7 @@ const ManageCategories = () => {
       render: (_, record) => (
         <div className="space-x-2">
           <Button
-            type="primary"
+            className="bg-[#a201f9] border text-white"
             size="small"
             onClick={() => handleEdit(record)}
           >
@@ -202,11 +209,34 @@ const ManageCategories = () => {
 
   const handleCancelAssign = () => setIsAssignModalOpen(false);
 
-  const handleConfirmAssign = (values) => {
-    console.log("Assigned:", values, selectedItem);
-    setIsAssignModalOpen(false);
-  };
+  const handleConfirmAssign = async (values) => {
+    console.log(values);
+    try {
+      if (assignType === "category") {
+        const response = await assignToCategory({
+          id: selectedItem._id,
+          data: { subCategories: values },
+        }).unwrap();
+        if (response.success) {
+          toast.success("Sub Categories assigned successfully!");
+          setIsAssignModalOpen(false);
+        }
+      } else {
+        const response = await assignToSubCategory({
+          id: selectedItem._id,
+          data: { subSubCategories: values },
+        }).unwrap();
+        if (response.success) {
+          toast.success("Sub Sub Categories assigned successfully!");
+          setIsAssignModalOpen(false);
+        }
+      }
+    } catch (error) {
+      toast.error("Failed to assign subcategories.");
+    }
 
+    // console.log("subCategories:", values);
+  };
   const onChangeImage = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
@@ -303,6 +333,7 @@ const ManageCategories = () => {
       </Modal>
 
       {/* Assign Modal */}
+      {/* Assign Modal */}
       <Modal
         title="Assign"
         open={isAssignModalOpen}
@@ -310,24 +341,42 @@ const ManageCategories = () => {
         footer={null}
       >
         <p className="text-2xl text-center my-10">{selectedItem?.name}</p>
-        <Form onFinish={handleConfirmAssign}>
-          <div className="flex gap-4">
-            <Form.Item className="w-full">
-              <Checkbox.Group
-                options={
-                  assignType === "category"
-                    ? subCategoryData?.map((subCat) => ({
-                        label: subCat.name,
-                        value: subCat._id,
-                      }))
-                    : subSubCategoryData?.map((subSub) => ({
-                        label: subSub.name,
-                        value: subSub._id,
-                      }))
-                }
-              />
-            </Form.Item>
-          </div>
+        <Form
+          onFinish={(values) => {
+            const checkedIds =
+              values[
+                assignType === "category" ? "subCategories" : "subSubCategories"
+              ];
+            handleConfirmAssign(checkedIds);
+          }}
+        >
+          <Form.Item
+            name={
+              assignType === "category" ? "subCategories" : "subSubCategories"
+            }
+            initialValue={
+              assignType === "category"
+                ? selectedItem?.subCategories?.map((item) => item._id) || []
+                : selectedItem?.subSubCategories?.map((item) => item._id) || []
+            }
+            rules={[
+              { required: true, message: "Please select at least one item" },
+            ]}
+          >
+            <Checkbox.Group
+              options={
+                assignType === "category"
+                  ? subCategoryData?.map((subCat) => ({
+                      label: subCat.name,
+                      value: subCat._id,
+                    }))
+                  : subSubCategoryData?.map((subSub) => ({
+                      label: subSub.name,
+                      value: subSub._id,
+                    }))
+              }
+            />
+          </Form.Item>
           <Button type="primary" htmlType="submit" className="mt-4">
             Submit
           </Button>

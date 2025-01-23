@@ -20,6 +20,7 @@ const Category = () => {
   const [form] = Form.useForm();
 
   const { data: categoryData, isLoading } = useAllCategoriesQuery();
+
   const [addCategory] = useAddCategoryMutation();
 
   const handleAddCategory = async (values) => {
@@ -64,6 +65,7 @@ const Category = () => {
   }
 
   const categories = categoryData?.data || [];
+  // console.log(categories);
 
   const filteredCategories = categories.filter(
     (category) =>
@@ -90,7 +92,11 @@ const Category = () => {
         {category?.image && (
           <img
             className="w-[200px] object-cover h-[130px] rounded-2xl shadow-lg"
-            src={`${import.meta.env.VITE_BASE_URL}${category.image}`}
+            src={
+              category?.image?.startsWith("http")
+                ? category?.image
+                : `${import.meta.env.VITE_BASE_URL}${category?.image}`
+            }
             alt="categoryImg"
           />
         )}

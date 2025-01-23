@@ -7,7 +7,7 @@ const Main = () => {
   return (
     <div className="grid grid-cols-12">
       {/* side bar */}
-      <div className="col-span-2 h-screen bg-gray-200 w-full">
+      <div className="col-span-2 h-screen bg-[#48086acc] w-full">
         <Sidebar />
       </div>
 

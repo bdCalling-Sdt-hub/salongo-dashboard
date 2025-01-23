@@ -51,6 +51,7 @@ const Professionals = () => {
   }
 
   const professionals = professionalsData?.data;
+  console.log(professionals);
 
   const topProfessionals = [...(professionals || [])]
     .sort((a, b) => b.conversionRate - a.conversionRate)

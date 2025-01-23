@@ -30,7 +30,7 @@ const PersonalInfo = () => {
 
   const adminData = fetchAdminProfile?.data;
 
-  console.log(adminData);
+  // console.log(adminData);
 
   useEffect(() => {
     if (adminData) {
@@ -40,7 +40,11 @@ const PersonalInfo = () => {
         address: adminData?.address,
         phone: adminData?.auth?.contact,
       });
-      setImgURL(`${baseUrl}${adminData?.profile}`);
+      setImgURL(
+        adminData?.auth?.profile?.startsWith("http")
+          ? adminData?.auth?.profile
+          : `${baseUrl}${adminData?.auth?.profile}`
+      );
       setContact(adminData?.contact);
     }
   }, [form, adminData]);

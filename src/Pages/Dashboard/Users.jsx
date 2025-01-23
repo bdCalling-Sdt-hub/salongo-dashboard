@@ -47,7 +47,7 @@ const Users = () => {
 
   const data = customers?.data?.data;
 
-  console.log(data);
+  // console.log(data);
 
   const onSelectChange = (newSelectedRowKeys) => {
     console.log("selectedRowKeys changed: ", newSelectedRowKeys);
@@ -66,7 +66,7 @@ const Users = () => {
       key: "name",
       render: (text, record) => {
         const name = record?.auth?.name || "Unknown";
-        const imgUrl = record?.profile || randomImg;
+        const imgUrl = record?.auth?.profile || randomImg;
         const fullImgUrl = imgUrl.startsWith("http")
           ? imgUrl
           : `${import.meta.env.VITE_BASE_URL}${imgUrl}`;

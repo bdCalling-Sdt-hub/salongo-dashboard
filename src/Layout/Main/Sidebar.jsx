@@ -218,7 +218,7 @@ const Sidebar = () => {
           className="mb-10  flex items-center flex-col gap-2 justify-center py-4"
         >
           <img src={logo} alt="" />
-          <h1 className="text-xl text-[#5b2579] font-semibold">SALONGO</h1>
+          <h1 className="text-xl text-white font-semibold">SALONGO</h1>
         </Link>
       </div>
       <Menu
