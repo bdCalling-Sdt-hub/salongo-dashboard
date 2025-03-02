@@ -5,7 +5,8 @@ import Cookies from "js-cookie";
 // Enhanced base query to handle token refresh
 const baseQueryWithReauth = async (args, api, extraOptions) => {
   const baseQuery = fetchBaseQuery({
-    baseUrl: "https://asad.binarybards.online/api/v1",
+    // baseUrl: "https://asad.binarybards.online/api/v1",
+    baseUrl: "http://167.172.167.183:5000/api/v1",
     prepareHeaders: (headers) => {
       const token =
         localStorage.getItem("authToken") ||
@@ -82,4 +83,4 @@ export const api = createApi({
 });
 
 // Export the image URL as a constant
-export const imageUrl = "https://asad.binarybards.online/api/v1";
+export const imageUrl = "http://167.172.167.183:5000/api/v1";
