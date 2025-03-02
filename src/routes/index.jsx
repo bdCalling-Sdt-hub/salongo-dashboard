@@ -27,7 +27,7 @@ import AddBanners from "../components/ui/Banners/AddBanners";
 import Freelancers from "../Pages/Dashboard/Freelancers";
 import Category from "../Pages/Category/Category";
 
-import SubSubCategory from "../Pages/Category/subSubCategory";
+import SubSubCategory from "../Pages/Category/SubSubCategory";
 import ManageCategories from "../Pages/Category/ManageCategories";
 import SubCategory from "../Pages/Category/SubCategory";
 
